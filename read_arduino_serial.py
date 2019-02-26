@@ -25,7 +25,7 @@ connection_timeout = 5
 # Setup serial connection -- will restart Arduino script
 ard = serial.Serial(port, baudrate, timeout=connection_timeout)
 
-with open(csv_path, "w", newline="") as f:
+with csv_path.open(mode="w") as f:
     writer = csv.writer(f)
     # write header
     writer.writerows(["Time", "Latitude", "Longitude", "RSSI"])
