@@ -15,8 +15,8 @@ lat = None
 lng = None
 
 if (isStationary == True):
-    lat = input("Lat: ")
-    lng = input("Lng: ")
+    lat = int(input("Lat: "))
+    lng = int(input("Lng: "))
 
 port = input("Port (COMXX or other format): ")
 baudrate = 9600
@@ -28,19 +28,20 @@ ard = serial.Serial(port, baudrate, timeout=connection_timeout)
 with open(csv_path, "w", newline="") as f:
     writer = csv.writer(f)
     # write header
-    writer.writerows(["Latitude", "Longitude", "RSSI"])
+    writer.writerows(["Time", "Latitude", "Longitude", "RSSI"])
 
     # collect data
     while True:
         line = ard.readline()
         recieved_data = line[:-2]
-        
+
         if (recived_data):
             if "REC:" in recieved_data:
                 rec_msg = recieved_data[4:]
             else:
                 rssi = int(recieved_data)
+                time = datetime.datetime.now()
                 if (isStationary == False):
-                    lat = input("Lat: ")
-                    lng = input("Lng: ")
-                writer.writerows([lat, lng, rssi])
+                    lat = "NR"
+                    lng = "NR"
+                writer.writerows([time, lat, lng, rssi])
