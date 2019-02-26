@@ -5,6 +5,15 @@ import csv
 
 from pathlib import Path
 
+def isanumber(a):
+    try:
+        float(a)
+        bool_a = True
+    except:
+        bool_a = False
+
+    return bool_a
+
 # TODO: figure out if we can search for arduino from all ports
 # Arduino settings
 test_name = input("Test Name: ")
@@ -28,7 +37,9 @@ ard = serial.Serial(port, baudrate, timeout=connection_timeout)
 with csv_path.open(mode="w") as f:
     writer = csv.writer(f)
     # write header
-    writer.writerows(["Time", "Latitude", "Longitude", "RSSI"])
+    writer.writerow(["Time", "Latitude", "Longitude", "RSSI"])
+
+    i = 0
 
     # collect data
     while True:
@@ -36,12 +47,17 @@ with csv_path.open(mode="w") as f:
         recieved_data = line[:-2]
 
         if (recieved_data):
+            #print(recieved_data)          
+            recieved_data = str(recieved_data, 'utf-8')
+            print(recieved_data, i)
+            i += 1            
             if "REC:" in recieved_data:
                 rec_msg = recieved_data[4:]
-            else:
+            elif isanumber(recieved_data):
                 rssi = int(recieved_data)
                 time = datetime.datetime.now()
+                print(rssi)
                 if (isStationary == False):
                     lat = "NR"
                     lng = "NR"
-                writer.writerows([time, lat, lng, rssi])
+                writer.writerow([time, lat, lng, rssi])
