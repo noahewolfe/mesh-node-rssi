@@ -35,7 +35,7 @@ with csv_path.open(mode="w") as f:
         line = ard.readline()
         recieved_data = line[:-2]
 
-        if (recived_data):
+        if (recieved_data):
             if "REC:" in recieved_data:
                 rec_msg = recieved_data[4:]
             else:
