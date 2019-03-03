@@ -24,8 +24,8 @@ lat = None
 lng = None
 
 if (isStationary == True):
-    lat = int(input("Lat: "))
-    lng = int(input("Lng: "))
+    lat = float(input("Lat: "))
+    lng = float(input("Lng: "))
 
 port = input("Port (COMXX or other format): ")
 baudrate = 9600
@@ -47,10 +47,10 @@ with csv_path.open(mode="w") as f:
         recieved_data = line[:-2]
 
         if (recieved_data):
-            #print(recieved_data)          
+            #print(recieved_data)
             recieved_data = str(recieved_data, 'utf-8')
             print(recieved_data, i)
-            i += 1            
+            i += 1
             if "REC:" in recieved_data:
                 rec_msg = recieved_data[4:]
             elif isanumber(recieved_data):
