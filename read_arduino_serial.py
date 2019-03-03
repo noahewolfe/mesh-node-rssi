@@ -37,11 +37,12 @@ ard = serial.Serial(port, baudrate, timeout=connection_timeout)
 with csv_path.open(mode="w") as f:
     writer = csv.writer(f)
     # write header
-    writer.writerow(["Time", "Latitude", "Longitude", "RSSI"])
+    writer.writerow(["Time", "Latitude", "Longitude", "RSSI", "Message"])
 
     i = 0
 
     # collect data
+    last_rec_msg = ""
     while True:
         line = ard.readline()
         recieved_data = line[:-2]
@@ -52,7 +53,7 @@ with csv_path.open(mode="w") as f:
             print(recieved_data, i)
             i += 1
             if "REC:" in recieved_data:
-                rec_msg = recieved_data[4:]
+                last_rec_msg = recieved_data[4:]
             elif isanumber(recieved_data):
                 rssi = int(recieved_data)
                 time = datetime.datetime.now()
@@ -60,4 +61,4 @@ with csv_path.open(mode="w") as f:
                 if (isStationary == False):
                     lat = "NR"
                     lng = "NR"
-                writer.writerow([time, lat, lng, rssi])
+                writer.writerow([time, lat, lng, rssi, last_rec_msg])

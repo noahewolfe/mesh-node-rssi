@@ -28,12 +28,6 @@ RH_RF95 rf95 (RFM95_CS, RFM95_INT);
 #include <RtcDS1307.h>
 RtcDS1307<TwoWire> Rtc(Wire);
 
-// start addresses at 2, as addresses 0 and 1 are reserved for the device's
-// id (stored in base64)
-int startAddr = 2;
-int addr = 2;
-int sendAddr = 2;
-
 void setup() {
 	// ===== Transciever Setup =====
 	pinMode(RFM95_RST, OUTPUT);
@@ -64,19 +58,9 @@ void setup() {
 	rf95.setTxPower(23, false);
 }
 
-int count = 0;
+int counter = 0;
 
 void loop() {
-
-	delay(10000);
-
-    char sendMsg[19] = "ABBCDFJPVi3BZCQDp"; // Fibonacci seq. for fun (to 233)
-    sendMsg[18] = 0; // null terminator
-
-	// Send the message!
-	rf95.send((uint8_t *)sendMsg, MESSAGE_LENGTH);
-	delay(10);
-	rf95.waitPacketSent();
 
     // ===== RECIEVE =====
 	// listen for other packets
@@ -90,5 +74,20 @@ void loop() {
             Serial.println(rf95.lastRssi());
         }
 	}
+
+	delay(3000);
+
+    /*
+    char sendMsg[17] = "ABBCDFJPVi3BZCQ";
+    sendMsg[16] = 0; // null terminator
+    */
+
+    // ===== TRANSMIT =====
+	// Send the message!
+	rf95.send((uint8_t *)counter, MESSAGE_LENGTH);
+	delay(10);
+	rf95.waitPacketSent();
+
+    counter++;
 
 }
