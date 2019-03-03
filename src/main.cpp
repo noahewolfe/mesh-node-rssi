@@ -84,7 +84,9 @@ void loop() {
 
     // ===== TRANSMIT =====
 	// Send the message!
-	rf95.send((uint8_t *)counter, MESSAGE_LENGTH);
+    char counter_msg[19];
+    itoa(counter, counter_msg, 10);
+	rf95.send((uint8_t *)counter_msg, MESSAGE_LENGTH);
 	delay(10);
 	rf95.waitPacketSent();
 

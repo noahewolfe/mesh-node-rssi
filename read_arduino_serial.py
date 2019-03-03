@@ -49,8 +49,8 @@ with csv_path.open(mode="w") as f:
 
         if (recieved_data):
             #print(recieved_data)
+            print(recieved_data)
             recieved_data = str(recieved_data, 'utf-8')
-            print(recieved_data, i)
             i += 1
             if "REC:" in recieved_data:
                 last_rec_msg = recieved_data[4:]
