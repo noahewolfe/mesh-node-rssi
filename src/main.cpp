@@ -5,9 +5,13 @@
 #include <SPI.h>
 #include <RH_RF95.h>
 
+#include <SoftwareSerial.h>
 #include <Wire.h>
 
-#include <SoftwareSerial.h>
+#include <LiquidCrystal.h>
+#define LCD_LIGHT_PIN A3
+
+LiquidCrystal lcd(14, 15, 9, 10, 5, 16);
 
 // ===== RFM95 =====
 // frequency
@@ -29,6 +33,12 @@ RH_RF95 rf95 (RFM95_CS, RFM95_INT);
 RtcDS1307<TwoWire> Rtc(Wire);
 
 void setup() {
+
+    lcd.begin(16, 2);
+    lcd.setCursor(0,0);
+
+    lcd.print(F("Hello, world!"));
+
 	// ===== Transciever Setup =====
 	pinMode(RFM95_RST, OUTPUT);
 	digitalWrite(RFM95_RST, HIGH);
@@ -40,6 +50,11 @@ void setup() {
 	}
 
 	delay(100);
+
+    pinMode(LCD_LIGHT_PIN, OUTPUT);
+    digitalWrite(LCD_LIGHT_PIN, HIGH); // HIGH ONLY FOR TESTING -- SET TO LOW!
+
+    lcd.clear();
 
 	// digital reset of transciever
 	digitalWrite(RFM95_RST, LOW);
@@ -72,10 +87,12 @@ void loop() {
 			Serial.print(F("REC:"));
       		Serial.println((char*)buf);
             Serial.println(rf95.lastRssi());
+            lcd.print(rf95.lastRssi());
         }
 	}
 
 	delay(3000);
+    lcd.clear();
 
     /*
     char sendMsg[17] = "ABBCDFJPVi3BZCQ";
