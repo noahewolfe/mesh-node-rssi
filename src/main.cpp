@@ -69,6 +69,11 @@ void setup() {
 	if ( !rf95.setFrequency(RF95_FREQ) ) {
 		while(1);
 	}
+
+    rf95.setSignalBandwidth(62500); // lowest
+    rf95.setSpreadingFactor(12); // highest
+    rf95.setCodingRate4(8); // highest.. denom. value
+
 	// set transmission power -- max!
 	rf95.setTxPower(23, false);
 }
@@ -91,7 +96,9 @@ void loop() {
         }
 	}
 
-	delay(3000);
+	delay(60000); // send once a minute, b/c at high power, can only do
+    // 1% duty cycle
+    // will need to measure sending rate to better understand this
     lcd.clear();
 
     /*

@@ -18,10 +18,10 @@ def coord_distance(lat1, lon1, lat2, lon2):
     lon1 = np.radians(lon1)
     lat2 = np.radians(lat2)
     lon2 = np.radians(lon2)
-    
+
     dlon = lon2 - lon1
     dlat = lat2 - lat1
-    
+
     a = np.sin(dlat / 2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2)**2
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
 
@@ -34,7 +34,7 @@ def max_offset(clat, clng, d):
     max_lat_off = 0.001
     while( coord_distance(clat, clng, clat + max_lat_off, clng) > d ):
         max_lat_off -= 0.0000000001 # tiny change
-                        
+
     # find max lng offset
     max_lng_off = 0.001
     while( coord_distance(clat, clng, clat, clng + max_lng_off) > d ):
@@ -44,16 +44,16 @@ def max_offset(clat, clng, d):
 
     """
     points = np.zeros((n,2))
-    for idx,p in enumerate(range(0, n)):    
+    for idx,p in enumerate(range(0, n)):
         angle = (2 * np.pi / n) * p
         points[idx,0] = clat + np.cos(angle) * max_lat_off
         points[idx,1] = clng + np.sin(angle) * max_lng_off
-    
-    return points[:,0], points[:,1] 
+
+    return points[:,0], points[:,1]
     """
-    
-track_path = Path(r"C:\Users\noahw\Google Drive\projects\air-pollution\rssi-testing\031919_1\track_points.csv")
-node_path  = Path(r"C:\Users\noahw\Google Drive\projects\air-pollution\rssi-testing\031919_1\031919_1.csv")
+
+track_path = Path(r"C:\Users\noahw\Google Drive\projects\air-pollution\rssi-testing\070619_6\track_points.csv")
+node_path  = Path(r"C:\Users\noahw\Google Drive\projects\air-pollution\rssi-testing\070619_6\070619_6.csv")
 
 est = pytz.timezone("US/Eastern")
 utc = pytz.utc
@@ -67,29 +67,29 @@ with open(track_path, "r") as track_file:
     for row in track_reader:
         # cut out +00 at the end, as it is troublesome... just remember, it is originally UTC!
         t_utc = datetime.strptime(row["time"][:-3], "%Y/%m/%d %H:%M:%S").replace(tzinfo=utc)
-        t = t_utc.astimezone(est).replace(tzinfo=None)        
+        t = t_utc.astimezone(est).replace(tzinfo=None)
         lng = float(row["X"])
         lat = float(row["Y"])
-        
+
         timed_coords.append([t, lat, lng])
-    
+
 ### Load Stationary Node Data ###
 node_timed_data = [] # [t, rssi] --> this is for a stationary node!
 lat_stationary = None
 lng_stationary = None
 with open(node_path, "r") as node_file:
     node_reader = csv.DictReader(node_file)
-    
+
     for row in node_reader:
         t = datetime.strptime(row["Time"], "%Y-%m-%d %H:%M:%S.%f")#.replace(tzinfo=est)
         #t = t.astimezone(utc)
         rssi = float(row["RSSI"])
         node_timed_data.append([t, rssi])
-        
-        if lat_stationary is None and lng_stationary is None:
-            lat_stationary = float(row["Latitude"])
-            lng_stationary = float(row["Longitude"])
-            
+
+        #if lat_stationary is None and lng_stationary is None:
+        #    lat_stationary = float(row["Latitude"])
+        #    lng_stationary = float(row["Longitude"])
+
 ### Combine Data ###
 t_tolerance = 1.5 # [s]
 
@@ -97,7 +97,7 @@ combined_t    = []
 combined_lat  = []
 combined_lng  = []
 combined_rssi = []
-for d in node_timed_data:   
+for d in node_timed_data:
     for c in timed_coords:
         datetime_diff = c[0] - d[0]
         diff = np.abs(datetime_diff.seconds) # diff in seconds
@@ -121,7 +121,7 @@ z = np.array(combined_rssi, dtype=np.float64)
 fig, ax = pl.subplots(1,1)
 
 m = Basemap(
-    resolution = None, 
+    resolution = None,
     llcrnrlat = y.min(),
     llcrnrlon = x.min(),
     urcrnrlat = y.max(),
