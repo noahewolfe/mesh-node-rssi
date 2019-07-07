@@ -81,6 +81,11 @@ void setup() {
 int counter = 0;
 long start_time = 0.0;
 long end_time = 0.0;
+long curr_time = 0.0;
+
+float duty_cycle = 0.01; // [% as decimal]
+float send_time = 4000.0; // [ms]
+float listen_time = send_time / duty_cycle; // [ms]
 
 void loop() {
 
@@ -92,17 +97,23 @@ void loop() {
 		uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
    		uint8_t len = sizeof(buf);
 
-		if( rf95.recv(buf, &len) ) {
-			Serial.print(F("REC:"));
-      		Serial.println((char*)buf);
-            Serial.println(rf95.lastRssi());
-            lcd.print("RSSI:");
-            lcd.print(rf95.lastRssi());
+        start_time = millis();
+        curr_time = start_time;
+
+        while (curr_time - start_time < listen_time) {
+            if( rf95.recv(buf, &len) ) {
+    			Serial.print(F("REC:"));
+          		Serial.println((char*)buf);
+                Serial.println(rf95.lastRssi());
+                lcd.print("RSSI:");
+                lcd.print(rf95.lastRssi());
+            }
         }
+
 	}
 
 
-    delay(2000); // send once a minute, b/c at high power, can only do
+    //delay(2000); // send once a minute, b/c at high power, can only do
     // 1% duty cycle
     // will need to measure sending rate to better understand this
 
