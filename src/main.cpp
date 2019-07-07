@@ -84,6 +84,8 @@ long end_time = 0.0;
 
 void loop() {
 
+    lcd.setCursor(0,0);
+
     // ===== RECIEVE =====
 	// listen for other packets
 	if( rf95.available() ) {
@@ -94,9 +96,15 @@ void loop() {
 			Serial.print(F("REC:"));
       		Serial.println((char*)buf);
             Serial.println(rf95.lastRssi());
+            lcd.print("RSSI:");
             lcd.print(rf95.lastRssi());
         }
 	}
+
+
+    delay(2000); // send once a minute, b/c at high power, can only do
+    // 1% duty cycle
+    // will need to measure sending rate to better understand this
 
     lcd.clear();
 
@@ -117,12 +125,9 @@ void loop() {
     end_time = millis();
 
     lcd.setCursor(0,1);
+    lcd.print("SEND TIME:");
     lcd.print(end_time - start_time);
 
     counter++;
-
-    delay(60000); // send once a minute, b/c at high power, can only do
-    // 1% duty cycle
-    // will need to measure sending rate to better understand this
 
 }
