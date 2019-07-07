@@ -79,6 +79,8 @@ void setup() {
 }
 
 int counter = 0;
+long start_time = 0.0;
+long end_time = 0.0;
 
 void loop() {
 
@@ -96,9 +98,6 @@ void loop() {
         }
 	}
 
-	delay(60000); // send once a minute, b/c at high power, can only do
-    // 1% duty cycle
-    // will need to measure sending rate to better understand this
     lcd.clear();
 
     /*
@@ -110,10 +109,20 @@ void loop() {
 	// Send the message!
     char counter_msg[19];
     itoa(counter, counter_msg, 10);
+
+    start_time = millis();
 	rf95.send((uint8_t *)counter_msg, MESSAGE_LENGTH);
 	delay(10);
 	rf95.waitPacketSent();
+    end_time = millis();
+
+    lcd.setCursor(0,1);
+    lcd.print(end_time - start_time);
 
     counter++;
+
+    delay(60000); // send once a minute, b/c at high power, can only do
+    // 1% duty cycle
+    // will need to measure sending rate to better understand this
 
 }
